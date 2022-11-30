@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import requestCameraAndAudioPermission from '../components/RequestCameraAudioPermission';
-import RtcEngine from 'react-native-agora';
+// import RtcEngine from 'react-native-agora';
 
 const useEngine = () => {
 

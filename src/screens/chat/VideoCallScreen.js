@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import AgoraUIKit from 'agora-rn-uikit';
+// import AgoraUIKit from 'agora-rn-uikit';
 import {View, Text} from 'react-native';
 import {Button} from 'react-native-paper';
 import {useSelector} from 'react-redux';
@@ -18,9 +18,9 @@ export default function VideoCallScreen({navigation}) {
   const rtcCallbacks = {
     EndCall: () => setVideoCall(false),
   };
-  return (
-    videoCall && (
-      <AgoraUIKit connectionData={connectionData} rtcCallbacks={rtcCallbacks} />
-    )
-  );
+  // return (
+  //   videoCall && (
+  //     <AgoraUIKit connectionData={connectionData} rtcCallbacks={rtcCallbacks} />
+  //   )
+  // );
 }
