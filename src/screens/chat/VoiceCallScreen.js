@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import requestCameraAndAudioPermission from '../../components/RequestCameraAudioPermission';
-import RtcEngine from 'react-native-agora';
+// import RtcEngine from 'react-native-agora';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
@@ -34,10 +34,10 @@ export default function VoiceCallScreen() {
   const engine = useRef(null);
 
   useEffect(() => {
-    fetchToken(uid, channelName, 1);
-    requestCameraAndAudioPermission().then(() => {
-      initEngine().then(() => {});
-    });
+    // fetchToken(uid, channelName, 1);
+    // requestCameraAndAudioPermission().then(() => {
+    //   initEngine().then(() => {});
+    // });
   }, []);
 
   const initEngine = async () => {
@@ -61,19 +61,18 @@ export default function VoiceCallScreen() {
     );
   };
 
-  async function fetchToken(uid, channelName, tokenRole) {
-    fetch(`${tokenUrl}/rtc/${channelName}/publisher/uid/${uid}`)
-      .then(function (response) {
-        response.json().then((data) => {
-          setToken(data.rtcToken);
-          console.log('data.rtcToken: ', data.rtcToken);
-        });
-
-      })
-      .catch(function (error) {
-        console.log('fetchToken', error);
-      });
-  }
+  // async function fetchToken(uid, channelName, tokenRole) {
+  //   fetch(`${tokenUrl}/rtc/${channelName}/publisher/uid/${uid}`)
+  //     .then(function (response) {
+  //       response.json().then(data => {
+  //         setToken(data.rtcToken);
+  //         console.log('data.rtcToken: ', data.rtcToken);
+  //       });
+  //     })
+  //     .catch(function (error) {
+  //       console.log('fetchToken', error);
+  //     });
+  // }
 
   const startCall = async () => {
     console.log('engine: at start ', engine);
