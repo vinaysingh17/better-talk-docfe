@@ -1,29 +1,118 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, Dimensions, Image, Switch} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  Image,
+  Switch,
+  TouchableOpacity,
+} from 'react-native';
 import {Divider} from 'react-native-paper';
 import userprofile from '../../assets/userprofile.png';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {TouchableHighlight} from 'react-native-gesture-handler';
+import {setImage} from '../../store/reducers/docReducer';
+import {updateImage} from '../../store/services/services';
 
 const windowHeight = Dimensions.get('window').height;
 
 export default function SettingsScreen({navigation}) {
   const [isEnabled, setIsEnabled] = useState(true);
-  const name = useSelector(state => state.doc.name);
+  const {name, image, docId} = useSelector(state => state.doc);
+  const dispatch = useDispatch();
+  // const {image} = useSelector(state => state.user);
+  // console.log(allREd);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const openGalery = () => {
+    var options = {
+      title: 'Select Image',
+
+      customButtons: [
+        {
+          name: 'customOptionKey',
+
+          title: 'Choose file from Custom Option',
+        },
+      ],
+
+      storageOptions: {
+        skipBackup: true,
+
+        path: 'images',
+      },
+    };
+
+    const requestCameraPermission = async () => {
+      try {
+        launchImageLibrary(options, async res => {
+          console.log('Response = ', res);
+
+          if (res.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (res.error) {
+            console.log('ImagePicker Error: ', res.error);
+          } else if (res.customButton) {
+            console.log('User tapped custom button: ', res.customButton);
+            alert(res.customButton);
+          } else {
+            let source = res;
+            const payload = {
+              ...res.assets[0],
+              filename: res.assets[0].fileName,
+              name: res.assets[0].fileName,
+            };
+            // setavatar(res.assets[0].uri);
+            // dispatch(setImage(res.assets[0].uri));
+            // await AsyncStorage.setItem('userImage', res.assets[0].uri);
+            dispatch(setImage(res.assets[0].uri));
+            // updateImage(docId, payload, res => {
+            //   console.log(res.data, '\n\n<<<<<Image\n\n');
+            //   dispatch(setImage(res.data.profile));
+            // });
+            console.log(res.assets[0].uri, '<<<<res', payload);
+          }
+        });
+        // const granted = await PermissionsAndroid.request(
+        //   PermissionsAndroid.PERMISSIONS.CAMERA,
+        //   {
+        //     title: 'App Camera Permission',
+        //     message: 'App needs access to your camera ',
+        //     buttonNeutral: 'Ask Me Later',
+        //     buttonNegative: 'Cancel',
+        //     buttonPositive: 'OK',
+        //   },
+        // );
+        // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        //   console.log('Camera permission given');
+
+        // } else {
+        //   console.log('Camera permission denied');
+        // }
+      } catch (err) {
+        console.warn(err);
+      }
+    };
+
+    requestCameraPermission();
+  };
   return (
     <View style={styles.rootContainer}>
       <View style={styles.profContainer}>
         <View style={styles.imgContainer}>
-          <Image source={userprofile} style={styles.prof} />
+          {image == '' && <Image source={userprofile} style={styles.prof} />}
+          {image != '' && <Image source={{uri: image}} style={styles.prof} />}
           <View style={styles.iconCon}>
             <MaterialCommunityIcons
               name="camera"
               size={16}
               color={'#33475B'}
               style={styles.camera}
+              onPress={openGalery}
             />
           </View>
         </View>
@@ -45,39 +134,54 @@ export default function SettingsScreen({navigation}) {
         <Text style={styles.heading}>Account</Text>
       </View>
       <Divider />
-      <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
-        <Text style={styles.subheading}>General Details</Text>
-        <MaterialIcons
-          name="chevron-right"
-          size={24}
-          color={'#6E7781'}
-          onPress={() => {
-            navigation.navigate('GenDetails');
-          }}
-        />
-      </View>
-      <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
-        <Text style={styles.subheading}>Professional Details</Text>
-        <MaterialIcons
-          name="chevron-right"
-          size={24}
-          color={'#6E7781'}
-          onPress={() => {
-            navigation.navigate('ProfDetails');
-          }}
-        />
-      </View>
-      <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
-        <Text style={styles.subheading}>About Yourself</Text>
-        <MaterialIcons
-          name="chevron-right"
-          size={24}
-          color={'#6E7781'}
-          onPress={() => {
-            navigation.navigate('AboutYourself');
-          }}
-        />
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('GenDetails');
+        }}>
+        <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
+          <Text style={styles.subheading}>General Details</Text>
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            color={'#6E7781'}
+            onPress={() => {
+              navigation.navigate('GenDetails');
+            }}
+          />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('ProfDetails');
+        }}>
+        <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
+          <Text style={styles.subheading}>Professional Details</Text>
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            color={'#6E7781'}
+            onPress={() => {
+              navigation.navigate('ProfDetails');
+            }}
+          />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('AboutYourself');
+        }}>
+        <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
+          <Text style={styles.subheading}>About Yourself</Text>
+          <MaterialIcons
+            name="chevron-right"
+            size={24}
+            color={'#6E7781'}
+            onPress={() => {
+              navigation.navigate('AboutYourself');
+            }}
+          />
+        </View>
+      </TouchableOpacity>
       <View style={styles.flexRow}>
         <MaterialCommunityIcons name="bell" size={24} color={'#28323E'} />
         <Text style={styles.heading}>Notifications</Text>
@@ -160,6 +264,7 @@ const styles = StyleSheet.create({
   prof: {
     width: 64,
     height: 64,
+    borderRadius: 50,
   },
   nameCont: {
     display: 'flex',

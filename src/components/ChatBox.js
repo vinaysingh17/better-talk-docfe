@@ -21,64 +21,64 @@ import {useSelector} from 'react-redux';
 const windowHeight = Dimensions.get('window').height;
 const chatHeight = Dimensions.get('window').height;
 
-const ChatBox = ({msgsToRender, typing, whoTyping}) => {
+const ChatBox = ({msgsToRender, typing, whoTyping, Link}) => {
   const docId = useSelector(state => state.doc.docId);
   const scrollViewRef = useRef();
 
   useEffect(() => {
-    if(scrollViewRef) {
+    if (scrollViewRef) {
       console.log('scrollViewRef: ', scrollViewRef);
-      scrollViewRef?.current?.scrollToEnd({x:0, y:0, animated: true});
+      scrollViewRef?.current?.scrollToEnd({x: 0, y: 0, animated: true});
     }
   }, [msgsToRender]);
 
   return (
     <View style={{position: 'absolute', bottom: 70}}>
-      {msgsToRender.length !== 0 && msgsToRender.map(item => {
-        return (
-          <ScrollView
-            contentContainerStyle={styles.chatContainer}
-            ref={scrollViewRef}
-            >
-            <View
-              style={
-                item.from === docId
-                  ? styles.msgContainerUser
-                  : styles.msgContainer
-              }>
-              {item.from === docId ? null : (
-                <Image source={avatar1} style={styles.imgAvatar} />
-              )}
+      {msgsToRender.length !== 0 &&
+        msgsToRender.map(item => {
+          return (
+            <ScrollView
+              contentContainerStyle={styles.chatContainer}
+              ref={scrollViewRef}>
               <View
                 style={
                   item.from === docId
-                    ? styles.contentContainerUser
-                    : styles.contentContainer
+                    ? styles.msgContainerUser
+                    : styles.msgContainer
                 }>
-                <Text
+                {item.from === docId ? null : (
+                  <Image source={avatar1} style={styles.imgAvatar} />
+                )}
+                <View
                   style={
-                    item.from === docId ? styles.msgTextUser : styles.msgText
+                    item.from === docId
+                      ? styles.contentContainerUser
+                      : styles.contentContainer
                   }>
-                  {item.message}
-                </Text>
+                  <Text
+                    style={
+                      item.from === docId ? styles.msgTextUser : styles.msgText
+                    }>
+                    {item.message}
+                  </Text>
+                </View>
+                {item.from === docId ? (
+                  <Image source={avatar1} style={styles.imgAvatarUser} />
+                ) : null}
               </View>
-              {item.from === docId ? (
-                <Image source={avatar1} style={styles.imgAvatarUser} />
+              {typing && whoTyping !== docId ? (
+                <View style={styles.typingCont}>
+                  <Text style={styles.isTyping}>Mr. Edward is Typing</Text>
+                  <LottieView
+                    source={require('../assets/typing.json')}
+                    autoPlay
+                    style={styles.lottieTyping}
+                  />
+                </View>
               ) : null}
-            </View>
-            {typing && whoTyping !== docId ? (
-              <View style={styles.typingCont}>
-                <Text style={styles.isTyping}>Mr. Edward is Typing</Text>
-                <LottieView
-                  source={require('../assets/typing.json')}
-                  autoPlay
-                  style={styles.lottieTyping}
-                />
-              </View>
-            ) : null}
-          </ScrollView>
-        );
-      })}
+            </ScrollView>
+          );
+        })}
     </View>
   );
 };

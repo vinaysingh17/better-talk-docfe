@@ -14,7 +14,13 @@ import {
   setPatients,
   setQualification,
 } from '../reducers/docReducer';
-const baseUrl = 'https://rihal-be.herokuapp.com/api/doctors';
+// const baseUrl = STRIX_URL+'/api/doctors';
+export const STRIX_URL =
+  'http://ec2-43-204-216-211.ap-south-1.compute.amazonaws.com:5000';
+
+// export const socketbase = 'http://192.168.10.3:3002';
+// export const socketbase = 'http://localhost:3002';
+export const socketbase = 'https://bettertalk-socket-production.up.railway.app';
 
 const saveId = async id => {
   try {
@@ -39,7 +45,10 @@ export const getDoctorIdAsync = createAsyncThunk(
     return AsyncStorage.getItem('docid')
       .then(function (response) {
         //console.log('doctors/postDoctorsAsync response', response);
-        console.log('doctors/getDoctorIdAsync response----------------------', response);
+        console.log(
+          'doctors/getDoctorIdAsync response----------------------',
+          response,
+        );
         dispatch(setDocId(response));
         dispatch(setLoading(false));
       })
@@ -53,16 +62,16 @@ export const getDoctorByIdAsync = createAsyncThunk(
   'doctors/getDoctorByIdAsync',
   ({id, dispatch}) => {
     return axios
-      .get(`https://rihal-be.herokuapp.com/api/doctors/${id}`)
+      .get(STRIX_URL + `/api/doctors/${id}`)
       .then(function (response) {
         //console.log(' getDoctorByIdAsync response: ', response.data);
         //console.log(' getDoctorByIdAsync response: data', response.data.age);
         dispatch(setName(response.data.name));
         dispatch(setAge(response.data.age));
         dispatch(setQualification(response.data.qualification));
-       // console.log(
+        // console.log(
         //  ' getDoctorByIdAsync response: data',
-//response.data.qualification,
+        //response.data.qualification,
         //);
         dispatch(setPatients(response.data.patients));
         // console.log(
@@ -103,10 +112,10 @@ export const postDoctorAsync = createAsyncThunk(
     description,
     patients,
     experience,
-    availability
+    availability,
   }) => {
     return axios
-      .post('https://rihal-be.herokuapp.com/api/doctors', {
+      .post(STRIX_URL + '/api/doctors', {
         name: name,
         qualification: qualification,
         sessions: 0,
@@ -140,7 +149,7 @@ export const updateSessionsAsync = createAsyncThunk(
   'doctors/updateSessionAsync',
   ({id, sessions}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/sessions/${id}`, {
+      .put(STRIX_URL + `/api/doctors/sessions/${id}`, {
         sessions: sessions,
       })
       .then(function (response) {
@@ -158,7 +167,7 @@ export const updateMinutesAsync = createAsyncThunk(
     console.log('minutes: updateMinutesAsync', minutes);
     console.log('id: updateMinutesAsync', id);
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/minutes/${id}`, {
+      .put(STRIX_URL + `/api/doctors/minutes/${id}`, {
         minutes: minutes,
       })
       .then(function (response) {
@@ -174,7 +183,7 @@ export const updateCallsAsync = createAsyncThunk(
   'doctors/updateCallsAsync',
   ({id, calls}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/calls/${id}`, {
+      .put(STRIX_URL + `/api/doctors/calls/${id}`, {
         calls: calls,
       })
       .then(function (response) {
@@ -190,7 +199,7 @@ export const updatePatientsAsync = createAsyncThunk(
   'doctors/updatePatientsAsync',
   ({id, patients, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/patients/${id}`, {
+      .put(STRIX_URL + `/api/doctors/patients/${id}`, {
         patients: patients,
       })
       .then(function (response) {
@@ -207,7 +216,7 @@ export const updateDescriptionAsync = createAsyncThunk(
   'doctors/updateDescriptionAsync',
   ({id, description, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/description/${id}`, {
+      .put(STRIX_URL + `/api/doctors/description/${id}`, {
         description: description,
       })
       .then(function (response) {
@@ -224,7 +233,7 @@ export const updateAboutAsync = createAsyncThunk(
   'doctors/updateAboutAsync',
   ({id, about, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/about/${id}`, {
+      .put(STRIX_URL + `/api/doctors/about/${id}`, {
         about: about,
       })
       .then(function (response) {
@@ -241,7 +250,7 @@ export const updateQualificationAsync = createAsyncThunk(
   'doctors/updateQualificationAsync',
   ({id, qualification, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/qualification/${id}`, {
+      .put(STRIX_URL + `/api/doctors/qualification/${id}`, {
         qualification: qualification,
       })
       .then(function (response) {
@@ -258,7 +267,7 @@ export const updateExperienceAsync = createAsyncThunk(
   'doctors/updateExperienceAsync',
   ({id, experience, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/experience/${id}`, {
+      .put(STRIX_URL + `/api/doctors/experience/${id}`, {
         experience: experience,
       })
       .then(function (response) {
@@ -275,7 +284,7 @@ export const updateAgeAsync = createAsyncThunk(
   'doctors/updateAgeAsync',
   ({id, age, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/age/${id}`, {
+      .put(STRIX_URL + `/api/doctors/age/${id}`, {
         age: age,
       })
       .then(function (response) {
@@ -292,7 +301,7 @@ export const updateGenderAsync = createAsyncThunk(
   'doctors/updateGenderAsync',
   ({id, gender, dispatch}) => {
     return axios
-      .put(`https://rihal-be.herokuapp.com/api/doctors/gender/${id}`, {
+      .put(STRIX_URL + `/api/doctors/gender/${id}`, {
         gender: gender,
       })
       .then(function (response) {
@@ -309,9 +318,9 @@ export const deleteAppointmentAsync = createAsyncThunk(
   'appointments/deleteAppointmentAsync',
   ({from, to}) => {
     return axios
-      .delete("https://rihal-be.herokuapp.com/api/appointments", {
+      .delete(STRIX_URL + '/api/appointments', {
         from: from,
-        to: to
+        to: to,
       })
       .then(function (response) {
         console.log('appointments/deleteAppointmentAsync response', response);

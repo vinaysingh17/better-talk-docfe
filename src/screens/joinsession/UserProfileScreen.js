@@ -10,7 +10,7 @@ import {
 import {Button} from 'react-native-paper';
 import FocusAwareStatusBar from '../../components/FocusAwareStatusBar';
 import {setProfileFocussed} from '../../store/reducers/appReducer';
-import { setPatientRequested } from '../../store/reducers/joinReducer';
+import {setPatientRequested} from '../../store/reducers/joinReducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,7 +19,9 @@ import dummyuser from '../../assets/dummyuser.png';
 import moment from 'moment';
 import {useCountdown} from '../../hooks/useCountdown';
 import io from 'socket.io-client';
-
+import {socketbase, STRIX_URL} from '../../store/services/docServices';
+import axios from 'axios';
+import {checkLocalAPI} from '../../store/services/services';
 
 const windowHeight = Dimensions.get('window').height + 30;
 const windowWidth = Dimensions.get('window').width;
@@ -65,16 +67,18 @@ export default function UserProfileScreen({route, navigation}) {
   const {userId} = route.params;
   let item = requestsList.find(x => x.id === userId);
   let now = moment();
-  let date = moment().add(5,'minutes');
+  let date = moment().add(5, 'minutes');
   let formatted = date.format('Do hh:mm A');
   const [days, hours, minutes, seconds] = useCountdown(date);
   let fromNow = date.diff(now, 'minutes', true).toFixed(2);
   const [userIdTemp, setUserIdTemp] = useState(123);
-  const docId = useSelector(state=>state.doc.docId);
-  const patientSelected = useSelector(state=>state.chat.patientSelected);
+  const docId = useSelector(state => state.doc.docId);
+  const patientSelected = useSelector(state => state.chat.patientSelected);
   const appointmentId = useSelector(state => state.chat.appointmentId);
   //console.log('patientSelected: ', patientSelected);
-  const socket = io('https://socketrahilbe.herokuapp.com/', {
+  // const socket = io('https://socketrahilbe.herokuapp.com/', {
+
+  const socket = io(socketbase, {
     query: {appointmentId: appointmentId, docId: docId},
     reconnectionDelay: 1000,
     reconnection: true,
@@ -85,8 +89,10 @@ export default function UserProfileScreen({route, navigation}) {
     rejectUnauthorized: false,
   });
 
-  
   useEffect(() => {
+    console.log('calling socket');
+    checkLocalAPI();
+
     socket.connect();
     socket.on('connect', () => {
       console.log('socket connected');
@@ -102,6 +108,12 @@ export default function UserProfileScreen({route, navigation}) {
       from: docId,
       to: patientSelected,
       id: 123,
+    });
+    socket.emit('join', {
+      message: 'lkjlkj',
+      from: '77',
+      to: 'patientSelected',
+      fromDoc: 'true',
     });
   }
 
@@ -187,7 +199,7 @@ export default function UserProfileScreen({route, navigation}) {
           mode="contained"
           uppercase={false}
           onPress={() => {
-           acceptAppointmentHandler();
+            acceptAppointmentHandler();
           }}
           disabled={fromNow >= 10}
           style={styles.btnOnboard}>
@@ -243,7 +255,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     padding: 20,
     height: 500,
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
   },
   userImage: {

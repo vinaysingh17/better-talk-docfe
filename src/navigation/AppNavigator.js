@@ -373,6 +373,7 @@ function TabsNavigator() {
           ),
         }}
         component={ForumsNavigator}
+        // component={ChatScreen}
       />
       <Tabs.Screen
         name="Settings"

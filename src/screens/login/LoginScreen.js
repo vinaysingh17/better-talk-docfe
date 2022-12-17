@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, Alert} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {UpdateAvailability} from '../../store/services/services';
 
 const statusList = ['Online', 'Offline'];
 
@@ -14,7 +15,19 @@ const LoginScreen = () => {
       <Text style={styles.welcomeText}>Login Status</Text>
       <SelectDropdown
         data={statusList}
-        onSelect={(selectedItem, index) => {}}
+        onSelect={(selectedItem, index) => {
+          console.log(selectedItem, '<<<this is selected');
+          if (selectedItem == 'Online') {
+            UpdateAvailability(true, res => {
+              Alert.alert(res.message);
+            });
+          }
+          if (selectedItem == 'Offline') {
+            UpdateAvailability(false, res => {
+              Alert.alert(res.message);
+            });
+          }
+        }}
         defaultValueByIndex={0}
         buttonTextAfterSelection={(selectedItem, index) => {
           return selectedItem;

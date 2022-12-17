@@ -8,6 +8,7 @@ export const usersSlice = createSlice({
     appointments: [],
     loading: false,
     error: false,
+    image: '',
   },
   reducers: {
     setAppointments: (state, action) => {

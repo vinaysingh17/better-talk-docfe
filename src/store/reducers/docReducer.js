@@ -23,6 +23,7 @@ export const docSlice = createSlice({
     experience: '',
     age: '',
     gender: '',
+    image: '',
   },
   reducers: {
     setName: (state, action) => {
@@ -35,6 +36,13 @@ export const docSlice = createSlice({
       return {
         ...state,
         qualification: action.payload,
+      };
+    },
+    setImage: (state, action) => {
+      console.log('action: set image', action);
+      return {
+        ...state,
+        image: action.payload,
       };
     },
     setiIsLoggedIn: (state, action) => {
@@ -156,8 +164,9 @@ export const {
   setDescription,
   setExperience,
   setPatients,
+  setImage,
   setAge,
   setGender,
-  setLoading
+  setLoading,
 } = docSlice.actions;
 export default docSlice.reducer;

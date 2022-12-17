@@ -9,6 +9,8 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  Linking,
+  Alert,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicon from 'react-native-vector-icons/Ionicons';
@@ -25,7 +27,6 @@ import useChat from '../../hooks/useChatRoom';
 import VideoCallScreen from './VideoCallScreen';
 import VoiceCallScreen from './VoiceCallScreen';
 
-
 const windowHeight = Dimensions.get('window').height - 60;
 const windowWidth = Dimensions.get('window').width;
 
@@ -33,7 +34,15 @@ const ChatScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const mode = useSelector(state => state.chat.mode);
   const [pvtMsg, setPvtMsg] = useState(null);
-  const {messages, typing, whoTyping, sendMessage, sendTyping} = useChat();
+  const {
+    messages,
+    typing,
+    whoTyping,
+    Link,
+    sendMessage,
+    sendTyping,
+    JoinOnMeet,
+  } = useChat();
   const [userId, setUserId] = useState(123);
   const now = moment();
   const sessionEnd = moment().add(60, 'minutes');
@@ -54,6 +63,14 @@ const ChatScreen = ({navigation}) => {
     }
     sendTyping(false);
   };
+  const joinMeet = link => {
+    console.log(link, '<<<Thisislink');
+    if (link !== '') {
+      JoinOnMeet(link);
+      // setPvtMsg('');
+    }
+    sendTyping(false);
+  };
 
   const changeTxtHandler = text => {
     setPvtMsg(text);
@@ -65,12 +82,34 @@ const ChatScreen = ({navigation}) => {
     <KeyboardAvoidingView
       behavior="height"
       style={styles.rootContainer}
-      keyboardVerticalOffset={Header.HEIGHT + 10}>
+      keyboardVerticalOffset={Header.HEIGHT}>
+      <Text
+        style={{
+          textAlign: 'center',
+          height: '100%',
+          height: 40,
+          fontSize: 20,
+          backgroundColor: Link != '' ? '#96ffae' : '#e2e2e2',
+
+          // borderWidth: 2,
+        }}
+        onPress={() => {
+          let meetCode = Math.floor(100000 + Math.random() * 900000);
+          meetCode = meetCode.toString().substring(0, 5);
+          // if (Link != '') {
+          // Alert.alert('clicked');
+          joinMeet('https://meet.jit.si/' + meetCode);
+          Linking.openURL(Link);
+          // }
+        }}>
+        Initiate a call with patient
+      </Text>
       {mode === 'chat' ? (
         <ScrollView>
           <View style={styles.msgs}>
             <ChatBox
               msgsToRender={messages}
+              Link={Link}
               typing={typing}
               whoTyping={whoTyping}
             />
